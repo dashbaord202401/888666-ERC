@@ -2,7 +2,9 @@
 
 pragma solidity ^0.8.19;
 
-contract ERC20 {
+import "./owner.sol";
+
+contract ERC20 is Owner {
     // 代币名称
     string private _name;
     // 代币标识
@@ -14,5 +16,38 @@ contract ERC20 {
     // 代币数量
     mapping(address => uint) private _balances;
     // 授权代币数量
-    mapping(adress => mapping(address => uint)) private _allowances
+    mapping(address => mapping(address => uint)) private _allowances;
+
+    constructor(){
+        _name = "DogWang Coin";
+        _symbol = "DWC";
+        _decimals = 18;
+
+        _mint(_getSender(), 10 * 1000 * 10**_decimals);
+    }
+    // 返回代币名字
+    function name() public view returns(string memory){
+        return _name;
+    }
+    // 返回代币标识
+    function symbol() public view returns(string memory){
+        return _symbol;
+    }
+    // 返回代币小数点
+    function decimals() public view returns(uint8){
+        return _decimals;
+    }
+    // 返回代币总发行量
+    function totalSupply() public view returns(uint){
+        return _totalSupply;
+    }
+    // 返回某账号的代币数量
+    function balanceOf(address account) public view returns(uint){
+        return _balances[account];
+    }
+    function _mint(address account, uint amount) internal {
+        require(account != address(0), "ERC20: account is zero");
+        _totalSupply += amount;
+        _balances[account] += amount;
+    }
 }
