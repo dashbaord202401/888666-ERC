@@ -45,9 +45,28 @@ contract ERC20 is Owner {
     function balanceOf(address account) public view returns(uint){
         return _balances[account];
     }
+    // 代币转发
+    function transfer(address to, uint amount) public returns(bool){
+        address owner = _getSender();
+        _transfer(owner, to, amount);
+        return true;
+    }
     function _mint(address account, uint amount) internal {
         require(account != address(0), "ERC20: account is zero");
         _totalSupply += amount;
         _balances[account] += amount;
+    }
+    function _transfer(address from, address to, uint amount) internal {
+        require(from != address(0),"ERC20: from is zero");
+        require(to != address(0),"ERC20: to is zero");
+
+        uint fromBalance = balanceOf(from);
+
+        require(fromBalance > 0, "ERC20: balance is not");
+
+        _balances[from] -= amount;
+
+        _balances[to] += amount;
+
     }
 }
