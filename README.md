@@ -2,7 +2,7 @@
 
 ## ERC20
 
-```
+```solidity
 interface IERC20 {
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
