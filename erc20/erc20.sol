@@ -111,7 +111,7 @@ contract DWC is Owner {
 
         uint reset = allowancesOf(from,to);
 
-        require(reset > amount, "ERC20: allowance is not");
+        require(reset >= amount, "ERC20: allowance is not");
 
         _approve(from,to,reset - amount);
     }
