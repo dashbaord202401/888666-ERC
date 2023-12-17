@@ -45,10 +45,21 @@ contract ERC20 is Owner {
     function balanceOf(address account) public view returns(uint){
         return _balances[account];
     }
+    // 返回授权的代币信息
+    function allowancesOf(address spender) public view returns(uint){
+        address owner = _getSender();
+        return _allowances[owner][spender];
+    }
     // 代币转发
     function transfer(address to, uint amount) public returns(bool){
         address owner = _getSender();
         _transfer(owner, to, amount);
+        return true;
+    }
+    // 代币授权
+    function approve(address spender, uint amount) public returns(bool){
+        address owner = _getSender();
+        _approve(owner, spender, amount);
         return true;
     }
     function _mint(address account, uint amount) internal {
@@ -68,5 +79,12 @@ contract ERC20 is Owner {
 
         _balances[to] += amount;
 
+    }
+
+    function _approve(address from, address to, uint amount) internal{
+        require(from != address(0), "ERC20: from is zero");
+        require(to != address(0),"ERC20: to is zero");
+        
+        _allowances[from][to] = amount;
     }
 }
