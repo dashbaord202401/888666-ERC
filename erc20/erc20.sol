@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 
 import "./owner.sol";
 
-contract ERC20 is Owner {
+contract DWC is Owner {
     // 代币名称
     string private _name;
     // 代币标识
