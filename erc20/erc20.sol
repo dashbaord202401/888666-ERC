@@ -25,6 +25,10 @@ contract ERC20 is Owner {
 
         _mint(_getSender(), 10 * 1000 * 10**_decimals);
     }
+    // 转账事件
+    event Transfer(address from, address to, uint amount);
+    // 授权事件
+    event Approve(address from ,address to, uint amount);
     // 返回代币名字
     function name() public view returns(string memory){
         return _name;
@@ -46,8 +50,7 @@ contract ERC20 is Owner {
         return _balances[account];
     }
     // 返回授权的代币信息
-    function allowancesOf(address spender) public view returns(uint){
-        address owner = _getSender();
+    function allowancesOf(address owner,address spender) public view returns(uint){
         return _allowances[owner][spender];
     }
     // 代币转发
@@ -60,6 +63,16 @@ contract ERC20 is Owner {
     function approve(address spender, uint amount) public returns(bool){
         address owner = _getSender();
         _approve(owner, spender, amount);
+        return true;
+    }
+    // 授权转发
+    function transferFrom(address from, address to, uint amount) public returns(bool){
+        address owner = _getSender();
+
+        _spendAllowance(from, owner, amount);
+
+        _transfer(from, to, amount);
+
         return true;
     }
     function _mint(address account, uint amount) internal {
@@ -79,6 +92,8 @@ contract ERC20 is Owner {
 
         _balances[to] += amount;
 
+        emit Transfer(from, to, amount);
+
     }
 
     function _approve(address from, address to, uint amount) internal{
@@ -86,5 +101,18 @@ contract ERC20 is Owner {
         require(to != address(0),"ERC20: to is zero");
         
         _allowances[from][to] = amount;
+
+        emit Approve(from, to, amount);
+    }
+
+    function _spendAllowance(address from, address to, uint amount) internal{
+        require(from != address(0), "ERC20: from is zero");
+        require(to != address(0),"ERC20: to is zero");
+
+        uint reset = allowancesOf(from,to);
+
+        require(reset > amount, "ERC20: allowance is not");
+
+        _approve(from,to,reset - amount);
     }
 }
